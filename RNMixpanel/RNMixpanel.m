@@ -25,6 +25,21 @@ RCT_EXPORT_MODULE(RNMixpanel)
 RCT_EXPORT_METHOD(sharedInstanceWithToken:(NSString *)apiToken) {
     [Mixpanel sharedInstanceWithToken:apiToken];
     mixpanel = [Mixpanel sharedInstance];
+
+    // Tell iOS you want your app to receive push notifications
+    // This code will work in iOS 8.0 xcode 6.0 or later:
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
+        [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    // This code will work in iOS 7.0 and below:
+    } else {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes: (UIRemoteNotificationTypeNewsstandContentAvailability| UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+    }
+
+    // Call .identify to flush the People record to Mixpanel
+    // You can change this id if another fits better the user, and add it as parameter
+    [mixpanel identify:mixpanel.distinctId];
+
     // React Native runs too late to listen for applicationDidBecomeActive,
     // so we expose the private method and call it explicitly here,
     // to ensure that important things like initializing the flush timer and
