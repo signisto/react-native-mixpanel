@@ -41,6 +41,16 @@ public class RNMixpanelModule extends ReactContextBaseJavaModule implements Life
 
     }
 
+    @ReactMethod
+    public void initPushHandling(final String peopleId, final String apiProject) {
+        if (mixpanel != null) {
+            MixpanelAPI.People people = mixpanel.getPeople();
+            if (peopleId != null && !peopleId.isEmpty()) {
+                people.identify(peopleId);
+            }
+            people.initPushHandling(apiProject);
+        }
+    }
 
     // Is there a better way to convert ReadableMap to JSONObject?
     // I only found this:
