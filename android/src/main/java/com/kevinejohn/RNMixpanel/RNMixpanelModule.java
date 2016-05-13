@@ -10,6 +10,8 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
+import com.facebook.react.bridge.Callback;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +41,15 @@ public class RNMixpanelModule extends ReactContextBaseJavaModule implements Life
     public void sharedInstanceWithToken(final String token) {
         mixpanel = MixpanelAPI.getInstance(reactContext, token);
 
+    }
+
+    @ReactMethod
+    public void getDistinctId(Callback idCallback) {
+      String distinctId = "";
+      if (mixpanel != null) {
+        distinctId = mixpanel.getDistinctId();
+      }
+      idCallback.invoke(distinctId);
     }
 
     @ReactMethod
